@@ -5,6 +5,7 @@ services:
         container_name: task-backend
         build:
             context: .
+            target: watcher
             args:
                 - WEATHER_KEY=${WEATHER_KEY}
                 - SECRET_KEY=${SECRET_KEY}
