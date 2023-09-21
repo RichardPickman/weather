@@ -1,3 +1,4 @@
+import { NextFunction } from "connect";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
@@ -6,7 +7,11 @@ const generateJWT = (email: number, password: string) =>
         expiresIn: "24h",
     });
 
-export const handleLogin = async (req: Request, res: Response) => {
+export const handleLogin = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { email, password } = req.body;
 
@@ -22,6 +27,7 @@ export const handleLogin = async (req: Request, res: Response) => {
 
         res.status(200).json(response);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.log("Error occured while getting an city weather");
+        next();
     }
 };
