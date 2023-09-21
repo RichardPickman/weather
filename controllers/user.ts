@@ -2,7 +2,7 @@ import { NextFunction } from "connect";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-const generateJWT = (email: number, password: string) =>
+const generateJWT = (email: string, password: string) =>
     jwt.sign({ email, password }, process.env.SECRET_KEY as string, {
         expiresIn: "24h",
     });
