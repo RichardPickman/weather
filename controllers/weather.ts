@@ -28,7 +28,7 @@ export const handleWeather = async (
 
         res.status(200).json(response);
     } catch (error) {
-        console.log("Error occured while getting an city weather");
+        console.log("Error occured while getting an city weather: ", error);
         next();
     }
 };
