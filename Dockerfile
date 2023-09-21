@@ -7,6 +7,8 @@ ARG SECRET_KEY
 ENV WEATHER_KEY $WEATHER_KEY
 ENV SECRET_KEY $SECRET_KEY
 
+COPY . .
+
 CMD ["npm", "run", "dev"]
 
 

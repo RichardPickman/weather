@@ -4,7 +4,6 @@ services:
     backend:
         container_name: task-backend
         build:
-            context: .
             target: watcher
             args:
                 - WEATHER_KEY=${WEATHER_KEY}
@@ -12,7 +11,7 @@ services:
         ports:
             - 5000:5000
         volumes:
-            - ./backend:/app
+            - .:/app
         networks:
             - task
 networks:
