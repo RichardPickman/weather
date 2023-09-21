@@ -1,0 +1,26 @@
+FROM node:18-alpine AS watcher
+WORKDIR /app
+
+ARG WEATHER_KEY
+ARG SECRET_KEY
+
+ENV WEATHER_KEY $WEATHER_KEY
+ENV SECRET_KEY $SECRET_KEY
+
+CMD ["npm", "run", "dev"]
+
+
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+ARG WEATHER_KEY
+ARG SECRET_KEY
+
+ENV WEATHER_KEY $WEATHER_KEY
+ENV SECRET_KEY $SECRET_KEY
+
+COPY . .
+
+RUN npm run build
+
+CMD ["npm", "run", "start"]

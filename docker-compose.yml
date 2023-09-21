@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+    backend:
+        container_name: task-backend
+        build:
+            context: .
+            args:
+                - WEATHER_KEY=${WEATHER_KEY}
+                - SECRET_KEY=${SECRET_KEY}
+        ports:
+            - 5000:5000
+        volumes:
+            - ./backend:/app
+        networks:
+            - task
+networks:
+    task:
