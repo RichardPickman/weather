@@ -1,6 +1,6 @@
 import e from "express";
-import { handleWeather } from "../controllers/weather";
 import { handleLogin } from "../controllers/user";
+import { handleWeather } from "../controllers/weather";
 import handleRequests from "../middlewares/requests";
 import JWTHandler from "../middlewares/token";
 
