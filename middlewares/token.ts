@@ -13,24 +13,22 @@ export default function (req: BodyRequest, res: Response, next: any) {
     try {
         const token = req.headers?.authorization?.split(" ")[1];
 
-        if (token) {
-            console.log("About to verify JWT token...");
-
-            const decoded = jwt.verify(token, process.env.SECRET_KEY as string);
-
-            console.log("Token verified successfully!!!");
-
-            req.body.user = decoded;
-
-            next();
-
-            return;
+        if (!token) {
+            throw new Error();
         }
+
+        console.log("About to verify JWT token...");
+
+        const decoded = jwt.verify(token, process.env.SECRET_KEY as string);
+
+        console.log("Token verified successfully!!!");
+
+        req.body.user = decoded;
 
         next();
     } catch (e) {
-        console.log("Token verification failed, responding with code 401");
+        console.log("Token verification failed, responding with code 403");
 
-        res.status(401).json({ message: "Not authorised" });
+        return res.status(403).json({ message: "Not authorised" });
     }
 }
