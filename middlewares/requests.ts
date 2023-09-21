@@ -1,28 +1,41 @@
 import { Request, Response } from "express";
 
-const userToRequestLimitMap = new Map<string, number>();
+const userToRequestLimitMap = new Map<
+    string,
+    { count: number; date: number }
+>();
 
 const MAX_REQUEST_COUNT = 5;
-const RATE_LIMIT_TIMEOUT = 120000;
-const DEFAULT_STATE = 0;
+const RATE_LIMIT_TIMEOUT = 10000;
 
 export default function (req: Request, res: Response, next: any) {
     try {
         const { email } = req.body.user;
 
-        const state = userToRequestLimitMap.get(email) ?? DEFAULT_STATE;
+        // get current requests count and last request date
+        const { count, date } = userToRequestLimitMap.get(email) ?? {
+            count: 0,
+            date: null,
+        };
 
-        if (state >= MAX_REQUEST_COUNT) {
+        // if no date - it's the first request, hence it's not a time limit
+        const isTimeLimit = date
+            ? Date.now() - date < RATE_LIMIT_TIMEOUT
+            : false;
+        const isRateLimit = count >= MAX_REQUEST_COUNT;
+
+        // if user is limited by time and rate, reject
+        if (isTimeLimit && isRateLimit) {
             return res.status(400).json({
                 message: "Too many requests per 2 minute session",
             });
         }
 
-        userToRequestLimitMap.set(email, state + 1);
-
-        setTimeout(() => {
-            userToRequestLimitMap.delete(email);
-        }, RATE_LIMIT_TIMEOUT);
+        // if user is limited by rate, date is expired, reset counter
+        userToRequestLimitMap.set(email, {
+            date: Date.now(),
+            count: isRateLimit ? 1 : count + 1,
+        });
 
         next();
     } catch (error) {
