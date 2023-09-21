@@ -27,7 +27,9 @@ export default function (req: Request, res: Response, next: any) {
         // if user is limited by time and rate, reject
         if (isTimeLimit && isRateLimit) {
             return res.status(400).json({
-                message: "Too many requests per 2 minute session",
+                message: `Too many requests per ${
+                    RATE_LIMIT_TIMEOUT / 1000
+                } seconds session`,
             });
         }
 
