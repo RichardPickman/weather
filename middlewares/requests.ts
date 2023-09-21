@@ -1,53 +1,44 @@
 import { Request, Response } from "express";
 
-const state = new Map<string, number>();
+const userToRequestLimitMap = new Map<
+    string,
+    { count: number; date: number }
+>();
+
+const MAX_REQUEST_COUNT = 5;
+const RATE_LIMIT_TIMEOUT = 10000;
+const DEFAULT_STATE = {
+    count: 0,
+    date: Date.now(),
+};
 
 export default function (req: Request, res: Response, next: any) {
     try {
         const { email } = req.body.user;
-        const isUserExist = state.has(email);
 
-        if (state.get(email) >= 5) {
-            console.log(
-                "The number of requests has exceeded the limit, rejecting"
-            );
+        // GET INTIAL STATE OR EXISTED
+        const state = userToRequestLimitMap.get(email) ?? DEFAULT_STATE;
 
-            res.status(400).json({
+        // CHECK IF COUNT IS HIGHER THEN RATE LIMIT WITH ERROR RESPONSE
+        if (state.count >= MAX_REQUEST_COUNT) {
+            return res.status(400).json({
                 message: "Too many requests per 2 minute session",
             });
-
-            return;
         }
 
-        if (isUserExist) {
-            console.log("User exist, updating value");
+        // OTHERWISE UPDATE STATE
+        userToRequestLimitMap.set(email, {
+            ...state,
+            count: state.count + 1,
+        });
 
-            const currentAmount = state.get(email);
+        // TIMEOUT TO REMOVE OBJECT
+        setTimeout(() => {
+            userToRequestLimitMap.delete(email);
+        }, RATE_LIMIT_TIMEOUT);
 
-            state.set(email, currentAmount + 1);
-
-            next();
-
-            return;
-        }
-
-        if (!isUserExist) {
-            console.log("User does not exist, creating value");
-
-            state.set(email, 1);
-
-            setTimeout(() => {
-                console.log("Session ended, removing from cache");
-                state.delete(email);
-            }, 120000);
-
-            next();
-
-            return;
-        }
-    } catch (e) {
-        console.log(e.message);
-
+        next();
+    } catch (error) {
         res.status(500).json({
             message: "Requests handler encountered an error",
         });
