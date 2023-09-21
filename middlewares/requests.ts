@@ -1,38 +1,25 @@
 import { Request, Response } from "express";
 
-const userToRequestLimitMap = new Map<
-    string,
-    { count: number; date: number }
->();
+const userToRequestLimitMap = new Map<string, number>();
 
 const MAX_REQUEST_COUNT = 5;
-const RATE_LIMIT_TIMEOUT = 10000;
-const DEFAULT_STATE = {
-    count: 0,
-    date: Date.now(),
-};
+const RATE_LIMIT_TIMEOUT = 120000;
+const DEFAULT_STATE = 0;
 
 export default function (req: Request, res: Response, next: any) {
     try {
         const { email } = req.body.user;
 
-        // GET INTIAL STATE OR EXISTED
         const state = userToRequestLimitMap.get(email) ?? DEFAULT_STATE;
 
-        // CHECK IF COUNT IS HIGHER THEN RATE LIMIT WITH ERROR RESPONSE
-        if (state.count >= MAX_REQUEST_COUNT) {
+        if (state >= MAX_REQUEST_COUNT) {
             return res.status(400).json({
                 message: "Too many requests per 2 minute session",
             });
         }
 
-        // OTHERWISE UPDATE STATE
-        userToRequestLimitMap.set(email, {
-            ...state,
-            count: state.count + 1,
-        });
+        userToRequestLimitMap.set(email, state + 1);
 
-        // TIMEOUT TO REMOVE OBJECT
         setTimeout(() => {
             userToRequestLimitMap.delete(email);
         }, RATE_LIMIT_TIMEOUT);
