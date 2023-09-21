@@ -1,13 +1,16 @@
 import { NextFunction, Request, Response } from "express";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const { WEATHER_KEY } = process.env;
 
 const getSupposedCity = async (city: string) => {
     const url = `http://api.weatherapi.com/v1/search.json?key=${WEATHER_KEY}&q=${city}`;
 
-    const [supposedCity] = await fetch(url).then((res) => res.json());
+    const arr = await fetch(url).then((res) => res.json());
 
-    return supposedCity;
+    return arr[0];
 };
 
 export const handleWeather = async (
