@@ -1,0 +1,17 @@
+version: "3"
+services:
+    app:
+        container_name: task-1-development
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: dev
+            args:
+                - WEATHER_KEY=${WEATHER_KEY}
+                - SECRET_KEY=${SECRET_KEY}
+                - ACCESS_TOKEN=${ACCESS_TOKEN}
+                - REFRESH_TOKEN=${REFRESH_TOKEN}
+                - PORT=${PORT}
+
+        ports:
+            - ${PORT}:${PORT}

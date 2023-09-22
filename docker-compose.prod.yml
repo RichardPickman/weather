@@ -1,0 +1,16 @@
+version: "3"
+services:
+    app:
+        container_name: task-1-production
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: prod
+            args:
+                - WEATHER_KEY=${WEATHER_KEY}
+                - SECRET_KEY=${SECRET_KEY}
+                - ACCESS_TOKEN=${ACCESS_TOKEN}
+                - REFRESH_TOKEN=${REFRESH_TOKEN}
+                - PORT=${PORT}
+        ports:
+            - ${PORT}:${PORT}
