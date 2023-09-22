@@ -1,9 +1,14 @@
 import { NextFunction } from "connect";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const { SECRET_KEY } = process.env;
 
 const generateJWT = (email: string, password: string) =>
-    jwt.sign({ email, password }, process.env.SECRET_KEY as string, {
+    jwt.sign({ email, password }, SECRET_KEY as string, {
         expiresIn: "24h",
     });
 
@@ -27,7 +32,10 @@ export const handleLogin = async (
 
         res.status(200).json(response);
     } catch (error) {
-        console.log("Error occured while getting an city weather");
+        console.log(
+            "Error occured while verifying the credentials: ",
+            error.message
+        );
         next();
     }
 };

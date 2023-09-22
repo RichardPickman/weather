@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
+dotenv.config();
+
+const { SECRET_KEY } = process.env;
 interface BodyRequest extends Request {
     user?: string | jwt.JwtPayload;
 }
@@ -19,7 +23,7 @@ export default function (req: BodyRequest, res: Response, next: any) {
 
         console.log("About to verify JWT token...");
 
-        const decoded = jwt.verify(token, process.env.SECRET_KEY as string);
+        const decoded = jwt.verify(token, SECRET_KEY as string);
 
         console.log("Token verified successfully!!!");
 

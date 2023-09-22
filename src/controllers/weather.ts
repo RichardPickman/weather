@@ -10,7 +10,7 @@ const getSupposedCity = async (city: string) => {
 
     const arr = await fetch(url).then((res) => res.json());
 
-    return arr[0];
+    return arr[0] || undefined;
 };
 
 export const handleWeather = async (
