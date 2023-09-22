@@ -5,9 +5,8 @@
     "main": "index.ts",
     "scripts": {
         "dev": "nodemon index.ts",
-        "build": "tsc index.ts --outDir build/",
-        "test": "jest",
-        "generate": "drizzle-kit generate:pg --schema=./db/*"
+        "build": "tsc",
+        "test": "jest"
     },
     "author": "",
     "license": "ISC",
